@@ -1,0 +1,476 @@
+{
+	"info": {
+		"_postman_id": "46209165-d9f0-454e-96d3-de748fd88175",
+		"name": "CELESC",
+		"description": "API da Select, importante lembrar que a maior parte das requisições é feita com GraphQL.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30443704"
+	},
+	"item": [
+		{
+			"name": "Login",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json, text/plain, */*",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Accept-Encoding",
+						"value": "gzip, deflate, br, zstd",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Accept-Language",
+						"value": "pt-BR,pt;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Connection",
+						"value": "keep-alive",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Content-Length",
+						"value": "522",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.1.1666567103.1724684051; _ga_MTVRLQEN60=GS1.1.1724684051.1.1.1724684690.60.0.517230440",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Host",
+						"value": "conecte.celesc.com.br",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Origin",
+						"value": "https://conecte.celesc.com.br",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Referer",
+						"value": "https://conecte.celesc.com.br/autenticacao/login",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Sec-Fetch-Dest",
+						"value": "empty",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Sec-Fetch-Mode",
+						"value": "cors",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Sec-Fetch-Site",
+						"value": "same-origin",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Chromium\";v=\"128\", \"Not;A=Brand\";v=\"24\", \"Microsoft Edge\";v=\"128\"",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Windows\"",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"DEBITOAUTOMATICO@FIESC.COM.BR\",\r\n    \"password\": \"Fiesc_22\",\r\n    \"socialCode\": \"\",\r\n    \"socialRedirectUri\": \"\",\r\n    \"channel\": \"ZAW\",\r\n    \"accessIp\": \"\",\r\n    \"deviceId\": \"Windows MS-Edge-Chromium Unknown\",\r\n    \"firebaseToken\": \"\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://conecte.celesc.com.br/auth/login",
+					"protocol": "https",
+					"host": [
+						"conecte",
+						"celesc",
+						"com",
+						"br"
+					],
+					"path": [
+						"auth",
+						"login"
+					]
+				},
+				"description": "Coleta os dados do login, além de coletar o Bearer Token"
+			},
+			"response": [
+				{
+					"name": "Login",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json, text/plain, */*",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Encoding",
+								"value": "gzip, deflate, br, zstd",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Language",
+								"value": "pt-BR,pt;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Connection",
+								"value": "keep-alive",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Content-Length",
+								"value": "522",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Cookie",
+								"value": "_ga=GA1.1.1666567103.1724684051; _ga_MTVRLQEN60=GS1.1.1724684051.1.1.1724684690.60.0.517230440",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Host",
+								"value": "conecte.celesc.com.br",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Origin",
+								"value": "https://conecte.celesc.com.br",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Referer",
+								"value": "https://conecte.celesc.com.br/autenticacao/login",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Sec-Fetch-Dest",
+								"value": "empty",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Sec-Fetch-Mode",
+								"value": "cors",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Sec-Fetch-Site",
+								"value": "same-origin",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "User-Agent",
+								"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "sec-ch-ua",
+								"value": "\"Chromium\";v=\"128\", \"Not;A=Brand\";v=\"24\", \"Microsoft Edge\";v=\"128\"",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "sec-ch-ua-mobile",
+								"value": "?0",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "sec-ch-ua-platform",
+								"value": "\"Windows\"",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"DEBITOAUTOMATICO@FIESC.COM.BR\",\r\n    \"password\": \"Fiesc_22\",\r\n    \"socialCode\": \"\",\r\n    \"socialRedirectUri\": \"\",\r\n    \"channel\": \"ZAW\",\r\n    \"accessIp\": \"\",\r\n    \"deviceId\": \"Windows MS-Edge-Chromium Unknown\",\r\n    \"firebaseToken\": \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://conecte.celesc.com.br/auth/login",
+							"protocol": "https",
+							"host": [
+								"conecte",
+								"celesc",
+								"com",
+								"br"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Thu, 05 Sep 2024 17:42:53 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "vary",
+							"value": "Origin"
+						},
+						{
+							"key": "Access-Control-Allow-Credentials",
+							"value": "true"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "gzip"
+						},
+						{
+							"key": "Strict-Transport-Security",
+							"value": "max-age=15724800; includeSubDomains"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"data\": {\n        \"authenticate\": {\n            \"login\": {\n                \"accessToken\": \"xih80xSc81+Y5PtrP00gZKJ0rp5kwxTCoPEapzAB0u3o0jlQnU1bqtwxY54+obmrh/dVTAnNzxX4AwH6u5Rusw==\",\n                \"tokenType\": \"opaque\",\n                \"documentAccess\": {\n                    \"categories\": null\n                }\n            },\n            \"profile\": {\n                \"email\": \"debitoautomatico@fiesc.com.br\",\n                \"givenName\": null,\n                \"familyName\": null,\n                \"sub\": \"b19b2581-e4e4-4ddd-bc7d-5ec51ec9d48a\"\n            },\n            \"sapAccess\": {\n                \"channel\": \"ZAW\",\n                \"userId\": \"b19b2581-e4e4-4ddd-bc7d-5ec51ec9d48a\",\n                \"accessType\": \"\",\n                \"partner\": \"12312253\",\n                \"accessId\": \"00000000000014974790\",\n                \"motherName\": \"\",\n                \"placeOfBirth\": \"\",\n                \"document\": null,\n                \"extraDocument\": null,\n                \"protocol\": \"2018651876\",\n                \"message\": null,\n                \"error\": null\n            },\n            \"message\": \"Login efetuado com sucesso!\"\n        }\n    }\n}"
+				}
+			]
+		},
+		{
+			"name": "Coleta contas do login",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "sVQ7nVkCwvuYaIQDh2WA9kqcZkanGv7Byr2jthCWSnGPGvPNMqqAh8ZeuITtA6pcGC214podKJ/xf5iKIlArPg==",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query ($userId: String!) {\r\n  findOneUserProfile(userId: $userId) {\r\n    userId\r\n    categories {\r\n      categoryId\r\n      subcategory\r\n      status\r\n      partnerName\r\n      partnerNumber\r\n      partnerDocument\r\n      __typename\r\n    }\r\n    accessId\r\n    channel\r\n    accessType\r\n    partner\r\n    protocolNumber\r\n    firstName\r\n    lastName\r\n    fullName\r\n    motherName\r\n    placeOfBirth\r\n    __typename\r\n  }\r\n}",
+						"variables": "{\r\n  \"channelCode\": \"ZAW\",\r\n  \"target\": \"sap\",\r\n  \"userId\": \"b19b2581-e4e4-4ddd-bc7d-5ec51ec9d48a\"\r\n}"
+					}
+				},
+				"url": {
+					"raw": "https://conecte.celesc.com.br/graphql",
+					"protocol": "https",
+					"host": [
+						"conecte",
+						"celesc",
+						"com",
+						"br"
+					],
+					"path": [
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Coleta instalações da conta",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "sVQ7nVkCwvuYaIQDh2WA9kqcZkanGv7Byr2jthCWSnGPGvPNMqqAh8ZeuITtA6pcGC214podKJ/xf5iKIlArPg==",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query ($partner: String!, $profileType: String) {\r\n  allContracts(partner: $partner, profileType: $profileType) {\r\n    contracts {\r\n      partner\r\n      installation\r\n      category\r\n      office\r\n      contract\r\n      contractAccount\r\n      home\r\n      name\r\n      street\r\n      houseNum\r\n      postCode\r\n      city1\r\n      city2\r\n      region\r\n      country\r\n      alertCode\r\n      alert\r\n      status\r\n      tarifType\r\n      favorite\r\n      denomination\r\n      messageHome\r\n      messageCard\r\n      messageType\r\n      complement\r\n      referencePoint\r\n      generation\r\n      __typename\r\n    }\r\n    message\r\n    error\r\n    __typename\r\n  }\r\n}",
+						"variables": "{\r\n  \"channelCode\": \"ZAW\",\r\n  \"target\": \"sap\",\r\n  \"partner\": \"0063937975\",\r\n  \"profileType\": \"GRPA\"\r\n}"
+					}
+				},
+				"url": {
+					"raw": "https://conecte.celesc.com.br/graphql",
+					"protocol": "https",
+					"host": [
+						"conecte",
+						"celesc",
+						"com",
+						"br"
+					],
+					"path": [
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Coleta todas as contas",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "sVQ7nVkCwvuYaIQDh2WA9kqcZkanGv7Byr2jthCWSnGPGvPNMqqAh8ZeuITtA6pcGC214podKJ/xf5iKIlArPg==",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query ($partner: String!, $installation: String!) {\r\n  getAllBills(partner: $partner, installation: $installation) {\r\n    bills {\r\n      protocol\r\n      installation\r\n      code\r\n      dueDate\r\n      totalAmount\r\n      currency\r\n      usage\r\n      previousUsage\r\n      consumption\r\n      compensation\r\n      compensationDate\r\n      compensationBloqued\r\n      launchBloqued\r\n      hasActiveInstallment\r\n      channel\r\n      serviceCode\r\n      accessId\r\n      serviceId\r\n      partner\r\n      billingPeriod\r\n      totalDays\r\n      flag\r\n      readType\r\n      availability\r\n      demandaContr\r\n      demandaNp\r\n      demandaFp\r\n      consumoFatNp\r\n      consumoFatFp\r\n      mediaConsFatNp\r\n      mediaConsFatFp\r\n      consumoRegNp\r\n      consumoRegFp\r\n      mediaConsRegNp\r\n      mediaConsRegFp\r\n      mediaValor\r\n      flagId\r\n      status\r\n      readTypeId\r\n      avalabilityId\r\n      codigoDeBarras\r\n      qrCode\r\n      positionRead\r\n      averageConsumption\r\n      intermediateConsumptionBilled\r\n      intermediateConsumptionReg\r\n      intermediateAverageConsBilled\r\n      intermediateAverageConsReg\r\n      reservedConsumption\r\n      averageReservedConsumption\r\n      intermediateGeneratedConsumption\r\n      generatedConsumptionNP\r\n      generatedConsumption\r\n      reservedGeneratedConsumption\r\n      generatedConsumptionFP\r\n      averageGeneratedCons\r\n      averageGeneratedConsNP\r\n      averageGeneratedConsFP\r\n      averageIntermediateGeneratedCons\r\n      averageReservedGeneratedCons\r\n      __typename\r\n    }\r\n    message\r\n    error\r\n    __typename\r\n  }\r\n}",
+						"variables": "{\r\n  \"channelCode\": \"ZAW\",\r\n  \"target\": \"sap\",\r\n  \"partner\": \"63937975\",\r\n  \"installation\": \"53645356\"\r\n}"
+					}
+				},
+				"url": {
+					"raw": "https://conecte.celesc.com.br/graphql",
+					"protocol": "https",
+					"host": [
+						"conecte",
+						"celesc",
+						"com",
+						"br"
+					],
+					"path": [
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Baixar conta",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "OzXQ2388Xx7qYHm5KCjPNbg62hUmFbZgJMMZIMJxwMlUDgxIqWeei2hXmpAGUQKBmlfYFxSiTVhe5YR4Nk9PmQ==",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"variables\": {\r\n        \"duplicateBillInput\": {\r\n            \"contractAccount\": \"1163256\",\r\n            \"accessId\": \"00000000000015003481\",\r\n            \"partner\": \"0012312253\",\r\n            \"invoiceId\": \"165000059769\",\r\n            \"channel\": \"ZAW\"\r\n        },\r\n        \"target\": \"sap\"\r\n    },\r\n    \"query\": \"mutation ($duplicateBillInput: DuplicateBillInput!) {\\n  duplicateBill(duplicateBillInput: $duplicateBillInput) {\\n    channel\\n    partner\\n    contractAccount\\n    accessId\\n    invoiceId\\n    invoiceBase64\\n    __typename\\n  }\\n}\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://conecte.celesc.com.br/graphql",
+					"protocol": "https",
+					"host": [
+						"conecte",
+						"celesc",
+						"com",
+						"br"
+					],
+					"path": [
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

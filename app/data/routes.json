@@ -1,0 +1,67 @@
+    {
+        "login": {
+            "url": "https://conecte.celesc.com.br/auth/login",
+            "method": "POST",
+            "data": {
+                "username":"DEBITOAUTOMATICO@FIESC.COM.BR",
+                "password":"Fiesc_22",
+                "socialCode":"",
+                "socialRedirectUri":"",
+                "channel":"ZAW",
+                "accessIp":"",
+                "deviceId":"Windows MS-Edge-Chromium Unknown",
+                "firebaseToken":""
+            }
+        },
+
+        "get_all_accounts": {
+            "url": "https://conecte.celesc.com.br/graphql",
+            "method": "POST",
+            "query": "query ($userId: String!) {\n  findOneUserProfile(userId: $userId) {\n    userId\n    categories {\n      categoryId\n      subcategory\n      status\n      partnerName\n      partnerNumber\n      partnerDocument\n      __typename\n    }\n    accessId\n    channel\n    accessType\n    partner\n    protocolNumber\n    firstName\n    lastName\n    fullName\n    motherName\n    placeOfBirth\n    __typename\n  }\n}",
+            "data": {
+                "channelCode": "ZAW",
+                "target": "sap",
+                "userId": null
+            }
+        },
+
+        "get_all_contracts": {
+            "url": "https://conecte.celesc.com.br/graphql",
+            "method": "POST",
+            "query": "query ($partner: String!, $profileType: String) {\n  allContracts(partner: $partner, profileType: $profileType) {\n    contracts {\n      partner\n      installation\n      category\n      office\n      contract\n      contractAccount\n      home\n      name\n      street\n      houseNum\n      postCode\n      city1\n      city2\n      region\n      country\n      alertCode\n      alert\n      status\n      tarifType\n      favorite\n      denomination\n      messageHome\n      messageCard\n      messageType\n      complement\n      referencePoint\n      generation\n      __typename\n    }\n    message\n    error\n    __typename\n  }\n}",
+            "data": {
+                "channelCode": "ZAW",
+                "target": "sap",
+                "partner": null,
+                "profileType": null
+            }
+        },
+
+        "get_all_invoices": {
+            "url": "https://conecte.celesc.com.br/graphql",
+            "method": "POST",
+            "query": "query ($partner: String!, $installation: String!) {\n  getAllBills(partner: $partner, installation: $installation) {\n    bills {\n      protocol\n      installation\n      code\n      dueDate\n      totalAmount\n      currency\n      usage\n      previousUsage\n      consumption\n      compensation\n      compensationDate\n      compensationBloqued\n      launchBloqued\n      hasActiveInstallment\n      channel\n      serviceCode\n      accessId\n      serviceId\n      partner\n      billingPeriod\n      totalDays\n      flag\n      readType\n      availability\n      demandaContr\n      demandaNp\n      demandaFp\n      consumoFatNp\n      consumoFatFp\n      mediaConsFatNp\n      mediaConsFatFp\n      consumoRegNp\n      consumoRegFp\n      mediaConsRegNp\n      mediaConsRegFp\n      mediaValor\n      flagId\n      status\n      readTypeId\n      avalabilityId\n      codigoDeBarras\n      qrCode\n      positionRead\n      averageConsumption\n      intermediateConsumptionBilled\n      intermediateConsumptionReg\n      intermediateAverageConsBilled\n      intermediateAverageConsReg\n      reservedConsumption\n      averageReservedConsumption\n      intermediateGeneratedConsumption\n      generatedConsumptionNP\n      generatedConsumption\n      reservedGeneratedConsumption\n      generatedConsumptionFP\n      averageGeneratedCons\n      averageGeneratedConsNP\n      averageGeneratedConsFP\n      averageIntermediateGeneratedCons\n      averageReservedGeneratedCons\n      __typename\n    }\n    message\n    error\n    __typename\n  }\n}",
+            "data": {
+                "channelCode": "ZAW",
+                "target": "sap",
+                "partner": null,
+                "installation": null
+            } 
+        },
+
+        "download_invoice": {
+            "url": "https://conecte.celesc.com.br/graphql",
+            "method": "POST",
+            "query": "mutation ($duplicateBillInput: DuplicateBillInput!) {\n  duplicateBill(duplicateBillInput: $duplicateBillInput) {\n    channel\n    partner\n    contractAccount\n    accessId\n    invoiceId\n    invoiceBase64\n    __typename\n  }\n}",
+            "data": {
+                "duplicateBillInput": {
+                    "contractAccount": null,
+                    "accessId": null,
+                    "partner": null,
+                    "invoiceId": null,
+                    "channel": "ZAW"
+                },
+                "target": "sap"
+            }
+        }
+    }
