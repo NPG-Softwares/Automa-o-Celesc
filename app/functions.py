@@ -12,7 +12,6 @@ from Objects.Obj_ApiSpring import get_logins as _get_logins
 from Objects.Obj_UploadFatura import FaturaInfo
 from Objects.Obj_ApiBase import APIs, Obj_BaseAPIError
 from Objects.Obj_Geral import Access, Account, Contract, Invoice
-from Objects.Obj_Logger import Logger
 
 
 class LoginError(Exception):
@@ -313,7 +312,7 @@ def create_invoice_object(login: BaseClient, account: Account,
     inv.Emissao = format_date(pdf_infos['emissao'], '%d/%m/%Y')
     inv.FornecedorClasseId = login.fornecedor_classe_id
     inv.FornecedorId = login.fornecedor_id
-    inv.LoginId = obj_account.login_id
+    inv.LoginId = 1
     inv.MesReferencia = invoice.billingPeriod[5:7]
     inv.MedicaoString = invoice.usage
     inv.NumeroConta = invoice.installation
