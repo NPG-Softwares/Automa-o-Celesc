@@ -1,3 +1,4 @@
+import os
 import json
 from dataclasses import dataclass
 from typing import Optional
@@ -19,7 +20,7 @@ class Obj_BaseAPI:
 
 
 class APIs:
-    endpoints = json.loads(open('data/routes.json', 'r').read())
+    endpoints = json.loads(open(os.path.abspath('data/routes.json'), 'r').read())
 
     class Login(Obj_BaseAPI):
         def __init__(self, username: str, password: str):
