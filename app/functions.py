@@ -1,11 +1,13 @@
+from functools import cache
 import re
 import json
+from time import sleep
 from typing import Literal
 import requests as req
 from retry import retry
 from datetime import datetime as dt
 
-from Objects.Obj_ApiSpringBase import BaseClient
+from Objects.Obj_ApiSpringBase import BaseControleDownload
 from Objects.Obj_PDF_Reader import PDFReader
 from Objects.Obj_ApiSpring import API_Spring
 from Objects.Obj_ApiSpring import get_logins as _get_logins
@@ -26,7 +28,7 @@ def login(username: str, password: str) -> dict:
 
     if response.status_code == 200:
         authenticate: dict = response.json()['data']['authenticate']
-        if authenticate.get('error'):
+        if authenticate.get('error') or authenticate.get('errors'):
             raise LoginError(response.status_code, authenticate.get('message'))
 
         return authenticate
@@ -61,6 +63,9 @@ def get_all_accounts(token: str, userId: str) -> dict:
         response_json: dict = response.json()
         if response_json.get('errors'):
             raise Obj_BaseAPIError(response.status_code, response_json.get('errors')[0]['message'])
+
+        if response_json['data']['findOneUserProfile']['categories'] is None:
+            return get_all_accounts(token, userId)
 
         return response_json
     else:
@@ -100,6 +105,9 @@ def get_all_contracts(token: str, partnerNumber: str, profileType: str) -> dict:
         if response_json.get('errors'):
             raise Obj_BaseAPIError(response.status_code, response_json.get('errors')[0]['message'])
 
+        if response_json['data']['allContracts']['contracts'] is None:
+            sleep(3)
+            return get_all_contracts(token, partnerNumber, profileType)
         return response_json
     else:
         raise Obj_BaseAPIError(response.status_code, response.text)
@@ -108,6 +116,9 @@ def get_all_contracts(token: str, partnerNumber: str, profileType: str) -> dict:
 def format_all_contracts(contracts: dict) -> list[Contract]:
     formated_contracts = []
     list_contracts = contracts['data']['allContracts']['contracts']
+    if list_contracts == None:
+        pass
+
     for contract in list_contracts:
         ct = Contract()
         ct.partner = contract['partner']
@@ -239,7 +250,7 @@ def format_all_invoices(invoices: dict) -> list[Invoice]:
 
 @retry(exceptions=Obj_BaseAPIError, tries=3, delay=10)
 def get_bt_invoice(token: str, contractAccount: str, partner: str,
-                   acessId: str, invoiceId: str):
+                   acessId: str, invoiceId: str, tr=0):
     _get_bt_invoice = APIs.Get_Invoice(contractAccount, partner,
                                        acessId, invoiceId)
 
@@ -255,6 +266,11 @@ def get_bt_invoice(token: str, contractAccount: str, partner: str,
         response_json: dict = response.json()
         if response_json.get('errors'):
             raise Obj_BaseAPIError(response.status_code, response_json.get('errors')[0]['message'])
+
+        if response_json['data']['duplicateBill']['invoiceBase64'] is None:
+            if tr == 3:
+                raise Exception('Erro ao buscar fatura')
+            return get_bt_invoice(token, contractAccount, partner, acessId, invoiceId, tr + 1)
 
         return response_json
     else:
@@ -281,21 +297,29 @@ def read_pdf(byte_file: bytes):
         return infos
 
 
-def get_logins(ambient: Literal['prod', 'hml'] = 'prod') -> list[BaseClient]:
-    logins = _get_logins(ambient=ambient)
+def get_logins(ambient: Literal['prod', 'hml'] = 'prod') -> list[BaseControleDownload]:
+    logins = _get_logins(name='CELESC', ambient=ambient)
 
     return logins
 
 
-def create_invoice_object(login: BaseClient, account: Account,
+@cache
+def get_account_type_id(login: BaseControleDownload) -> int:
+    api = API_Spring(ambient=login.ambient)
+    id = api.get_account_type_id(name='ENERGIA')
+    return id
+
+
+def create_invoice_object(login: BaseControleDownload, account: Account,
                           contract: Contract, invoice: Invoice,
-                          pdf_infos: dict, byte_file: bytes) -> tuple[FaturaInfo, dict]:
+                          pdf_infos: dict, byte_file: bytes) -> tuple[FaturaInfo, list]:
     def format_date(date: str, input_format: str = '%Y-%m-%d',
                     output_format: str = '%Y-%m-%dT%H:%M:%S') -> str:
         return dt.strptime(date, input_format).strftime(output_format)
 
     now = dt.now().strftime('%Y-%m-%dT%H:%M:%S')
 
+    obj_account = None
     for acc in login.contas:
         if acc.numero_conta == invoice.installation:
             obj_account = acc
@@ -304,7 +328,6 @@ def create_invoice_object(login: BaseClient, account: Account,
     inv = FaturaInfo()
     inv.AnoReferencia = invoice.billingPeriod[:4]
     inv.CodigoBarra = invoice.codigoDeBarras
-    inv.ContaId = obj_account.id
     inv.CicloInicio = format_date(pdf_infos['inicioCiclo'], '%d/%m/%Y')
     inv.CicloFim = format_date(pdf_infos['fimCiclo'], '%d/%m/%Y')
     inv.ClienteId = login.cliente_id
@@ -317,20 +340,29 @@ def create_invoice_object(login: BaseClient, account: Account,
     inv.MedicaoString = invoice.usage
     inv.NumeroConta = invoice.installation
     inv.Status = "PENDENTE"
-    inv.TipoContaId = obj_account.tipo_conta_id
-    inv.UnidadeId = obj_account.unidade_id
     inv.ValorDocumentoPDF = invoice.totalAmount
     inv.Vencimento = format_date(invoice.dueDate)
+
+    if obj_account:
+        if obj_account.status != 'ATIVO':
+            return None, None
+
+        inv.ContaId = obj_account.conta_id
+        inv.TipoContaId = obj_account.tipo_conta_id
+        inv.UnidadeId = obj_account.unidade_id
+    else:
+        inv.TipoContaId = get_account_type_id(login)
+        inv.UnidadeId = login.unidade_id
 
     fat_name = f'CELESC_{format_date(invoice.dueDate, output_format="%d%m%y")}_{inv.NumeroConta}.pdf'
     inv.ArquivoAzurePdf = fat_name
     inv.NomeArquivoPdf = fat_name
 
-    files = {'files': (fat_name, byte_file, 'application/pdf')}
+    files = [(fat_name, byte_file, 'application/pdf')]
 
     return inv, files
 
 
-def upload_invoice(invoice: FaturaInfo, files: dict, platform) -> None:
+def upload_invoice(invoice: FaturaInfo, files: list, platform) -> None:
     payload = invoice.__dict__
     API_Spring(platform).up_invoice(payload, files)
