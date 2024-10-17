@@ -116,7 +116,7 @@ def get_all_contracts(token: str, partnerNumber: str, profileType: str) -> dict:
 def format_all_contracts(contracts: dict) -> list[Contract]:
     formated_contracts = []
     list_contracts = contracts['data']['allContracts']['contracts']
-    if list_contracts == None:
+    if list_contracts == None:  # noqa
         pass
 
     for contract in list_contracts:
