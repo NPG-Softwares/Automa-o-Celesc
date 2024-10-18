@@ -77,6 +77,7 @@ class API_Spring:
         headers['Authorization'] = self.token
 
         params = {}
+        params['status'] = 'ATIVO'
 
         if fornecedor_id:
             params['fornecedorId'] = fornecedor_id
