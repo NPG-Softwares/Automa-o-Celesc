@@ -159,3 +159,4 @@ cython_debug/
 app/.env
 poetry.lock
 app/.env
+automacao_celesc.tar
