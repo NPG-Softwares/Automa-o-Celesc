@@ -39,28 +39,28 @@ O projeto está organizado em pastas e arquivos da seguinte forma:
 
 
 **Produção**
-- prod_login_email
-- prod_login_password
-- prod_end_get_token
-- prod_end_get_fornecedores_id
-- prod_end_get_unidades_by_id
-- prod_end_logins
-- prod_end_get_invoices
-- prod_end_up_invoice
-- prod_end_send_error_log
-- prod_end_get_account_type_id
+* prod_login_email
+* prod_login_password
+* prod_end_get_token
+* prod_end_get_fornecedores_id
+* prod_end_get_unidades_by_id
+* prod_end_logins
+* prod_end_get_invoices
+* prod_end_up_invoice
+* prod_end_send_error_log
+* prod_end_get_account_type_id
 
 **Homologação**
-- hml_login_email
-- hml_login_password
-- hml_end_get_token
-- hml_end_get_fornecedores_id
-- hml_end_get_unidades_by_id
-- hml_end_logins
-- hml_end_get_invoices
-- hml_end_up_invoice
-- hml_end_send_error_log
-- hml_end_get_account_type_id
+* hml_login_email
+* hml_login_password
+* hml_end_get_token
+* hml_end_get_fornecedores_id
+* hml_end_get_unidades_by_id
+* hml_end_logins
+* hml_end_get_invoices
+* hml_end_up_invoice
+* hml_end_send_error_log
+* hml_end_get_account_type_id
 
 
 ## Como Executar o Projeto
