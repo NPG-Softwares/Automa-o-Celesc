@@ -117,7 +117,7 @@ def main():
     cada tentativa em caso de erro. Se todas as tentativas falharem,
     levanta a exce o da  ltima tentativa.
     """
-    platform = 'hml'  # prod | hml
+    platform = 'prod'  # prod | hml
     logins: list[BaseControleDownload] = get_logins(platform)
 
     print('Logins encontrados:', logins)

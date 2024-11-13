@@ -277,24 +277,78 @@ def get_bt_invoice(token: str, contractAccount: str, partner: str,
         raise Obj_BaseAPIError(response.status_code, response.text)
 
 
+def formatar_valor_brasileiro(valor: float):
+    if isinstance(valor, str):
+        valor = float(valor)
+
+    valor = round(valor, 2)
+    return f"{valor:,.2f}".replace(',', 'X').replace('.', ',').replace('X', '.')
+
+
 def read_pdf(byte_file: bytes):
     obj_pdf = PDFReader(byte_file)
     pdf = obj_pdf.read_pdf()
-    infos = {}
+    infos = {
+        'medicao': None,
+        'valor': None,
+        'codigoBarras': None
+    }
+    consumo = 0.0
+    tipos_consumo = ['Consumo Ponta TE', 'Consumo Fora Ponta TE', 'Consumo TE']
 
-    pages = obj_pdf.get_pages()
-    for page in pages:
-        text = obj_pdf.get_text(pdf, page)
+    text = obj_pdf.get_text(pdf, 0)
 
-        emissao = re.findall(r'\d\d/\d\d/\d\d\d\d\nDATA EMISSAO', text)[0][:10]
-        infos['emissao'] = emissao
-        ciclo: str = re.findall(r'\d\d/\d\d/\d\d\d\d\n\d\d/\d\d/\d\d\d\d', text)[0]
-        ciclo: str = ciclo.split('\n')
+    pattern = r'Único\n(([\d,.])*[\s\n]*){5}'
+    regex = re.findall(pattern, text)
+    if len(regex) > 0:
+        value: str = regex[0][0].replace('\n', '')
+        value: str = value.replace('.', '')
+        value: str = value.replace(',', '.')
+        value: str = formatar_valor_brasileiro(value)
+        infos['medicao'] = value
 
-        infos['inicioCiclo'] = ciclo[0]
-        infos['fimCiclo'] = ciclo[1]
+    for tipo_consumo in tipos_consumo:
+        pattern = fr'{tipo_consumo}[\n\s]*KWH[\n\s]*(?:\d[.,]?)*'
+        regex = re.search(pattern, text)
+        if regex:
+            value = regex.group(0)
+            value = value.split('\n')[-1]
+            value = value.split(' ')[-1]
+            value = value.replace('.', '')
+            value = value.replace(',', '.')
+            consumo += float(value)
 
-        return infos
+    if consumo == 0.0:
+        infos['consumo'] = None
+    else:
+        infos['consumo'] = formatar_valor_brasileiro(round(consumo, 2))
+
+    vencimento = re.search(r'Cliente:\n\d{2}/\d{4}\n(\d{2}/\d{2}/\d{4})', text)
+    infos['vencimento'] = vencimento.group(1)
+    emissao = re.findall(r'\d\d/\d\d/\d\d\d\d\nDATA EMISSAO', text)[0][:10]
+    infos['emissao'] = emissao
+    ciclo: str = re.findall(r'\d\d/\d\d/\d\d\d\d\n\d\d/\d\d/\d\d\d\d', text)[0]
+    ciclo: str = ciclo.split('\n')
+
+    valor_pdf = re.search(r'\nTOTAL\n([\d,.]*)', text)
+    if valor_pdf:
+        valor_pdf = valor_pdf.group(1)
+        valor_pdf = valor_pdf.replace('.', '')
+        valor_pdf = valor_pdf.replace(',', '.')
+        infos['valor'] = float(valor_pdf)
+
+    infos['inicioCiclo'] = ciclo[0]
+    infos['fimCiclo'] = ciclo[1]
+
+    texto_sem_chave = re.sub(r'Chave de Acesso:\n\d{4,}[\s.]?', '', text)
+    codigo_barras = re.search(r'(\d{4,}[.]?){4,6}', texto_sem_chave)
+    if codigo_barras:
+        codigo_barras = codigo_barras.group(0)
+        codigo_barras = codigo_barras.replace('.', '')
+        assert len(codigo_barras) > 30, 'Código de barras inválido'
+        infos['codigoBarras'] = codigo_barras
+
+    return infos
 
 
 def get_logins(ambient: Literal['prod', 'hml'] = 'prod') -> list[BaseControleDownload]:
@@ -327,7 +381,7 @@ def create_invoice_object(login: BaseControleDownload, account: Account,
 
     inv = FaturaInfo()
     inv.AnoReferencia = invoice.billingPeriod[:4]
-    inv.CodigoBarra = invoice.codigoDeBarras
+    inv.CodigoBarra = pdf_infos['codigoBarras'] or invoice.codigoDeBarras or ''
     inv.CicloInicio = format_date(pdf_infos['inicioCiclo'], '%d/%m/%Y')
     inv.CicloFim = format_date(pdf_infos['fimCiclo'], '%d/%m/%Y')
     inv.ClienteId = login.cliente_id
@@ -337,14 +391,23 @@ def create_invoice_object(login: BaseControleDownload, account: Account,
     inv.FornecedorId = login.fornecedor_id
     inv.LoginId = 1
     inv.MesReferencia = invoice.billingPeriod[5:7]
-    inv.MedicaoString = invoice.usage
     inv.NumeroConta = invoice.installation
     inv.Status = "PENDENTE"
-    inv.ValorDocumentoPDF = invoice.totalAmount
-    inv.Vencimento = format_date(invoice.dueDate)
+    inv.ValorDocumentoPDF = pdf_infos['valor'] or invoice.totalAmount
+    inv.Vencimento = format_date(pdf_infos['vencimento'], '%d/%m/%Y')
+
+    if isinstance(pdf_infos['medicao'], str):
+        inv.MedicaoString = pdf_infos['medicao']
+    elif isinstance(pdf_infos['consumo'], str):
+        inv.MedicaoString = pdf_infos['consumo']
+    elif float(invoice.consumption) != 0:
+        inv.MedicaoString = formatar_valor_brasileiro(invoice.consumption)
+    else:
+        raise Exception('Nenhuma medição encontrada')
 
     if obj_account:
         if obj_account.status != 'ATIVO':
+            print('Conta inativa')
             return None, None
 
         inv.ContaId = obj_account.conta_id
@@ -354,7 +417,8 @@ def create_invoice_object(login: BaseControleDownload, account: Account,
         inv.TipoContaId = get_account_type_id(login)
         inv.UnidadeId = login.unidade_id
 
-    fat_name = f'CELESC_{format_date(invoice.dueDate, output_format="%d%m%y")}_{inv.NumeroConta}.pdf'
+    dt_vencimento = format_date(inv.Vencimento, input_format="%Y-%m-%dT%H:%M:%S", output_format="%d%m%y")
+    fat_name = f'CELESC_{dt_vencimento}_{inv.NumeroConta}.pdf'
     inv.ArquivoAzurePdf = fat_name
     inv.NomeArquivoPdf = fat_name
 
