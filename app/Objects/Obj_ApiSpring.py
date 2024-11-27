@@ -46,7 +46,7 @@ class API_Spring:
 
     def __get_envs__(self) -> None:
         match self.ambient:
-            case 'hml':
+            case 'hml' | 'hms':
                 self.email = os.getenv('hml_login_email')
                 self.password = os.getenv('hml_login_password')
                 self.end_token = os.getenv('hml_end_get_token')
@@ -58,6 +58,7 @@ class API_Spring:
                 self.end_get_unidades_by_id = os.getenv('hml_end_get_unidades_by_id')
                 self.end_get_account_type_id = os.getenv('hml_end_get_account_type_id')
                 self.end_up_invoice_with_digital = os.getenv('hml_end_up_invoice_with_digital')
+                self.referer = 'https://portal-hms.springsmartsolutions.com/'
 
             case 'prod':
                 self.email = os.getenv('prod_login_email')
@@ -71,6 +72,7 @@ class API_Spring:
                 self.end_get_unidades_by_id = os.getenv('prod_end_get_unidades_by_id')
                 self.end_get_account_type_id = os.getenv('prod_end_get_account_type_id')
                 self.end_up_invoice_with_digital = os.getenv('prod_end_up_invoice_with_digital')
+                self.referer = 'https://portal.springsmartsolutions.com.br/'
 
             case 'qas':
                 self.email = os.getenv('qas_login_email')
@@ -84,6 +86,7 @@ class API_Spring:
                 self.end_get_unidades_by_id = os.getenv('qas_end_get_unidades_by_id')
                 self.end_get_account_type_id = os.getenv('qas_end_get_account_type_id')
                 self.end_up_invoice_with_digital = os.getenv('qas_end_up_invoice_with_digital')
+                self.referer = 'https://portal-hms.springsmartsolutions.com/'
 
             case 'local':
                 self.email = os.getenv('local_login_email')
@@ -97,6 +100,7 @@ class API_Spring:
                 self.end_get_unidades_by_id = os.getenv('local_end_get_unidades_by_id')
                 self.end_get_account_type_id = os.getenv('local_end_get_account_type_id')
                 self.end_up_invoice_with_digital = os.getenv('local_end_up_invoice_with_digital')
+                self.referer = 'https://portal-hms.springsmartsolutions.com/'
 
             case _:
                 raise AmbientError('Ambiente inválido, utilize os ambientes '
@@ -108,6 +112,7 @@ class API_Spring:
         url = self.end_logins
         headers = {}
         headers['Authorization'] = self.token
+        headers['Referer'] = self.referer
 
         params = {}
         params['status'] = 'ATIVO'
@@ -126,6 +131,7 @@ class API_Spring:
         url = self.end_get_fornecedores_id
         headers = {}
         headers['Authorization'] = self.token
+        headers['Referer'] = self.referer
 
         params = {}
         params['NomeFantasia'] = name
@@ -139,6 +145,7 @@ class API_Spring:
         url = url.replace('{id}', str(id))
         headers = {}
         headers['Authorization'] = self.token
+        headers['Referer'] = self.referer
 
         r = req.get(url, headers=headers, verify=False)
 
@@ -149,6 +156,7 @@ class API_Spring:
 
         headers = {}
         headers['Authorization'] = self.token
+        headers['Referer'] = self.referer
 
         params = {}
         params['Nome'] = name
@@ -171,6 +179,7 @@ class API_Spring:
             kwargs['headers'] = {}
 
         kwargs['headers']['Authorization'] = self.token
+        kwargs['headers']['Referer'] = self.referer
 
         r = req.request(method, **kwargs, verify=False)
 
@@ -198,11 +207,15 @@ class API_Spring:
         Raises:
             LoginError: If there was an error during the login process.
         """
-
-        r = req.post(self.end_token, json={
+        credentials = {
             'email': self.email,
             'password': self.password
-        }, verify=False)
+        }
+
+        headers = {}
+        headers['Referer'] = self.referer
+
+        r = req.post(self.end_token, json=credentials, headers=headers, verify=False)
 
         if r.status_code == 200:
             return "Bearer " + r.json()['token']
@@ -213,7 +226,7 @@ class API_Spring:
         url = self.end_get_invoices
         headers = {}
         headers['Authorization'] = self.token
-        headers['Status'] = 'PENDENTE'
+        headers['Referer'] = self.referer
 
         params = {}
         params['ClienteId'] = client.cliente_id
@@ -243,6 +256,7 @@ class API_Spring:
         url = self.end_up_invoice_with_digital if with_digital else self.end_up_invoice
 
         headers = {'Authorization': self.token}
+        headers['Referer'] = self.referer
 
         # Prepara os arquivos para o envio em um único form-data
         form_files = [
@@ -271,6 +285,7 @@ class API_Spring:
         url = self.end_send_error_log
         headers = {}
         headers['Authorization'] = self.token
+        headers['Referer'] = self.referer
 
         payload = {
             'titulo': title,
