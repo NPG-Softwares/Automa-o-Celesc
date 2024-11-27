@@ -1,12 +1,15 @@
 import os
 import dotenv
+import warnings
 import requests as req
+
 from typing import Literal
 from functools import cache
 
 from Objects.Obj_ApiSpringBase import BaseControleDownload, BaseInvoice, BaseUnit
 
 dotenv.load_dotenv()
+warnings.filterwarnings("ignore")
 
 
 # ------------------------------------------------- Exceções
@@ -30,7 +33,7 @@ class API_Spring_Error(Exception):
 class API_Spring:
     _token = {}
 
-    def __init__(self, ambient: Literal['prod', 'hml']) -> None:
+    def __init__(self, ambient: Literal['prod', 'hml', 'qas', 'local']) -> None:
         self.ambient = ambient
         self.__get_envs__()
 
@@ -42,34 +45,64 @@ class API_Spring:
             API_Spring._token[self.ambient] = self.token
 
     def __get_envs__(self) -> None:
-        if self.ambient == 'hml':
-            self.email = os.getenv('hml_login_email')
-            self.password = os.getenv('hml_login_password')
-            self.end_token = os.getenv('hml_end_get_token')
-            self.end_logins = os.getenv('hml_end_logins')
-            self.end_up_invoice = os.getenv('hml_end_up_invoice')
-            self.end_get_invoices = os.getenv('hml_end_get_invoices')
-            self.end_send_error_log = os.getenv('hml_end_send_error_log')
-            self.end_get_fornecedores_id = os.getenv('hml_end_get_fornecedores_id')
-            self.end_get_unidades_by_id = os.getenv('hml_end_get_unidades_by_id')
-            self.end_get_account_type_id = os.getenv('hml_end_get_account_type_id')
+        match self.ambient:
+            case 'hml':
+                self.email = os.getenv('hml_login_email')
+                self.password = os.getenv('hml_login_password')
+                self.end_token = os.getenv('hml_end_get_token')
+                self.end_logins = os.getenv('hml_end_logins')
+                self.end_up_invoice = os.getenv('hml_end_up_invoice')
+                self.end_get_invoices = os.getenv('hml_end_get_invoices')
+                self.end_send_error_log = os.getenv('hml_end_send_error_log')
+                self.end_get_fornecedores_id = os.getenv('hml_end_get_fornecedores_id')
+                self.end_get_unidades_by_id = os.getenv('hml_end_get_unidades_by_id')
+                self.end_get_account_type_id = os.getenv('hml_end_get_account_type_id')
+                self.end_up_invoice_with_digital = os.getenv('hml_end_up_invoice_with_digital')
 
-        elif self.ambient == 'prod':
-            self.email = os.getenv('prod_login_email')
-            self.password = os.getenv('prod_login_password')
-            self.end_token = os.getenv('prod_end_get_token')
-            self.end_logins = os.getenv('prod_end_logins')
-            self.end_up_invoice = os.getenv('prod_end_up_invoice')
-            self.end_get_invoices = os.getenv('prod_end_get_invoices')
-            self.end_send_error_log = os.getenv('prod_end_send_error_log')
-            self.end_get_fornecedores_id = os.getenv('prod_end_get_fornecedores_id')
-            self.end_get_unidades_by_id = os.getenv('prod_end_get_unidades_by_id')
-            self.end_get_account_type_id = os.getenv('prod_end_get_account_type_id')
+            case 'prod':
+                self.email = os.getenv('prod_login_email')
+                self.password = os.getenv('prod_login_password')
+                self.end_token = os.getenv('prod_end_get_token')
+                self.end_logins = os.getenv('prod_end_logins')
+                self.end_up_invoice = os.getenv('prod_end_up_invoice')
+                self.end_get_invoices = os.getenv('prod_end_get_invoices')
+                self.end_send_error_log = os.getenv('prod_end_send_error_log')
+                self.end_get_fornecedores_id = os.getenv('prod_end_get_fornecedores_id')
+                self.end_get_unidades_by_id = os.getenv('prod_end_get_unidades_by_id')
+                self.end_get_account_type_id = os.getenv('prod_end_get_account_type_id')
+                self.end_up_invoice_with_digital = os.getenv('prod_end_up_invoice_with_digital')
 
-        else:
-            raise AmbientError('Ambiente inválido, utilize os ambientes '
-                               '[hml | prod] sendo "hml" (homologação) ou '
-                               '"prod" (produção).')
+            case 'qas':
+                self.email = os.getenv('qas_login_email')
+                self.password = os.getenv('qas_login_password')
+                self.end_token = os.getenv('qas_end_get_token')
+                self.end_logins = os.getenv('qas_end_logins')
+                self.end_up_invoice = os.getenv('qas_end_up_invoice')
+                self.end_get_invoices = os.getenv('qas_end_get_invoices')
+                self.end_send_error_log = os.getenv('qas_end_send_error_log')
+                self.end_get_fornecedores_id = os.getenv('qas_end_get_fornecedores_id')
+                self.end_get_unidades_by_id = os.getenv('qas_end_get_unidades_by_id')
+                self.end_get_account_type_id = os.getenv('qas_end_get_account_type_id')
+                self.end_up_invoice_with_digital = os.getenv('qas_end_up_invoice_with_digital')
+
+            case 'local':
+                self.email = os.getenv('local_login_email')
+                self.password = os.getenv('local_login_password')
+                self.end_token = os.getenv('local_end_get_token')
+                self.end_logins = os.getenv('local_end_logins')
+                self.end_up_invoice = os.getenv('local_end_up_invoice')
+                self.end_get_invoices = os.getenv('local_end_get_invoices')
+                self.end_send_error_log = os.getenv('local_end_send_error_log')
+                self.end_get_fornecedores_id = os.getenv('local_end_get_fornecedores_id')
+                self.end_get_unidades_by_id = os.getenv('local_end_get_unidades_by_id')
+                self.end_get_account_type_id = os.getenv('local_end_get_account_type_id')
+                self.end_up_invoice_with_digital = os.getenv('local_end_up_invoice_with_digital')
+
+            case _:
+                raise AmbientError('Ambiente inválido, utilize os ambientes '
+                                   '[hml | prod | qas | local] sendo "hml" para homologação, '
+                                   '"prod" para produção, "qas" para servidor teste e '
+                                   '"local" para ambiente local.')
 
     def get_controle_download(self, fornecedor_id: str = None, cliente_id: str = None) -> dict:
         url = self.end_logins
@@ -85,7 +118,7 @@ class API_Spring:
         if cliente_id:
             params['clienteId'] = cliente_id
 
-        r = req.get(url, headers=headers, params=params)
+        r = req.get(url, headers=headers, params=params, verify=False)
 
         return r.json()
 
@@ -97,7 +130,7 @@ class API_Spring:
         params = {}
         params['NomeFantasia'] = name
 
-        r = req.get(url, headers=headers, params=params)
+        r = req.get(url, headers=headers, params=params, verify=False)
 
         return [(x['id'], x['clienteAdmId']) for x in r.json()['data']]
 
@@ -107,7 +140,7 @@ class API_Spring:
         headers = {}
         headers['Authorization'] = self.token
 
-        r = req.get(url, headers=headers)
+        r = req.get(url, headers=headers, verify=False)
 
         return r.json()
 
@@ -123,10 +156,15 @@ class API_Spring:
         if client_id:
             params['ClienteId'] = client_id
 
-        r = req.get(url, headers=headers, params=params)
+        r = req.get(url, headers=headers, params=params, verify=False)
 
         if r.status_code == 200:
             return r.json()['data'][0]['id']
+
+        elif r.status_code == 401:
+            self.token = self.get_token()
+            API_Spring._token[self.ambient] = self.token
+            return self.get_account_type_id(name, client_id)
 
     def new_request(self, method, **kwargs) -> dict:
         if not kwargs.get('headers'):
@@ -134,10 +172,15 @@ class API_Spring:
 
         kwargs['headers']['Authorization'] = self.token
 
-        r = req.request(method, **kwargs)
+        r = req.request(method, **kwargs, verify=False)
 
         if r.status_code == 200:
             return r.json()
+
+        elif r.status_code == 401:
+            self.token = self.get_token()
+            API_Spring._token[self.ambient] = self.token
+            return self.new_request(method, **kwargs)
         else:
             raise API_Spring_Error(f'Erro [{r.status_code}]: {r.text}')
 
@@ -159,7 +202,7 @@ class API_Spring:
         r = req.post(self.end_token, json={
             'email': self.email,
             'password': self.password
-        })
+        }, verify=False)
 
         if r.status_code == 200:
             return "Bearer " + r.json()['token']
@@ -175,51 +218,56 @@ class API_Spring:
         params = {}
         params['ClienteId'] = client.cliente_id
 
-        r = req.get(url, headers=headers, params=params)
+        r = req.get(url, headers=headers, params=params, verify=False)
+
+        if r.status_code == 401:
+            self.token = self.get_token()
+            API_Spring._token[self.ambient] = self.token
+            return self.get_accounts(client)
 
         return r.json()
 
-    def up_invoice(self, payload: dict, files: list[tuple]) -> None:
+    def up_invoice(self, payload: dict, files: list[tuple], with_digital: bool = False) -> None:
         """
         Uploads an invoice to the API using the provided payload and files.
 
         Args:
             payload (dict): The payload containing the invoice data.
-            files (dict): The files to be uploaded along with the invoice.
+            files (list[tuple]): List of files to be uploaded in the form [(name, content, mime_type)].
+            with_digital (bool): Determines the endpoint to be used.
 
         Raises:
-            TypeError: If an invalid or unknown file type is found.
             req.exceptions.ContentDecodingError: If a file is too large to be sent.
             req.exceptions.RequestException: If there is an error during the upload process.
         """
-        url = self.end_up_invoice
-        headers = {}
-        headers['Authorization'] = self.token
+        url = self.end_up_invoice_with_digital if with_digital else self.end_up_invoice
 
-        for file in files:
-            f = {'files': file}
-            temp_payload = payload.copy()
+        headers = {'Authorization': self.token}
 
-            if file[0] == temp_payload['ArquivoAzurePdf']:
-                temp_payload['ArquivoAzureDigital'] = None
-                temp_payload['NomeArquivoDigital'] = None
-            else:
-                temp_payload['ArquivoAzurePdf'] = None
-                temp_payload['NomeArquivoPdf'] = None
+        # Prepara os arquivos para o envio em um único form-data
+        form_files = [
+            ('files', (file[0], file[1], file[2]))
+            for file in files
+        ]
 
-            r = req.post(url, headers=headers, data=temp_payload, files=f)
+        # Faz a requisição POST com o payload e os arquivos
+        response = req.post(url, headers=headers, data=payload, files=form_files, verify=False)
 
-            if r.status_code == 200:
-                print(f'Arquivo {f.get("files")[0]} enviado com sucesso.')
-            elif r.status_code == 413:
-                raise req.exceptions.ContentDecodingError(f'{file[0]}: Arquivo muito grande para ser enviado.')
-            elif r.status_code != 200:
-                raise req.exceptions.RequestException(f'Erro [{r.status_code}]: {r.text}')
-        print('Fatura enviada com sucesso.')
+        if response.status_code == 200:
+            print('Arquivos enviados com sucesso.')
+        elif response.status_code == 413:
+            raise req.exceptions.ContentDecodingError('Um ou mais arquivos são muito grandes para serem enviados.')
+        elif response.status_code == 401:
+            # Atualiza o token e tenta novamente
+            self.token = self.get_token()
+            API_Spring._token[self.ambient] = self.token
+            self.up_invoice(payload, files, with_digital)
+        else:
+            raise req.exceptions.RequestException(f'Erro [{response.status_code}]: {response.text}')
 
     def send_error_log(self, title: str, message: str, stacktrace: str,
                        origin: str, status: Literal['warning', 'error', 'info', 'success'] = 'error',
-                       login_id: int = 1, cliente_adm_id: int = None) -> None:
+                       login_id: int = 1, cliente_adm_id: int | None = None) -> None:
         url = self.end_send_error_log
         headers = {}
         headers['Authorization'] = self.token
@@ -234,30 +282,28 @@ class API_Spring:
             'clienteAdmId': cliente_adm_id
         }
 
-        r = req.post(url, headers=headers, json=payload)
+        r = req.post(url, headers=headers, json=payload, verify=False)
 
         if r.status_code == 200:
             print('Log enviado com sucesso!')
+        elif r.status_code == 401:
+            self.token = self.get_token()
+            API_Spring._token[self.ambient] = self.token
+            self.send_error_log(title, message, stacktrace, origin, status, login_id, cliente_adm_id)
         else:
             print('Payload:', payload)
             raise UploadError(f'Erro [{r.status_code}]: {r.text}')
 
 
 def filter_controle_download(api: API_Spring, list_controles_download: dict,
-                             fornecedores_ids: list[int], ambient: Literal['prod', 'hml']) -> list[BaseControleDownload]:
+                             fornecedores_ids: list[int], ambient: Literal['prod', 'hml', 'qas', 'local']) -> list[BaseControleDownload]:
     filtered_accounts: list[str] = []
     filtered_controle_download: list[BaseControleDownload] = []
 
     assert len(list_controles_download) > 0, 'Nenhum login encontrado.'
     for controle_download in list_controles_download:
 
-        if controle_download['login'] == '' or controle_download['login'] is None:
-            continue
-
         if controle_download['senha'] == '' or controle_download['senha'] is None:
-            continue
-
-        if controle_download['login'] in ['00000000000', '000.000.000.00']:
             continue
 
         obj_controle_download = BaseControleDownload(controle_download)
@@ -281,26 +327,30 @@ def filter_controle_download(api: API_Spring, list_controles_download: dict,
             obj_controle_download.contas.append(obj_account)
             filtered_accounts.append(obj_account.numero_conta)
 
-        # unidades = [x.unidade_id for x in obj_controle_download.contas]
-        # unidades = list(set(unidades))
+        unidades = [x.unidade_id for x in obj_controle_download.contas]
+        unidades = list(set(unidades))
 
-        # for unidade_id in unidades:
-        #     if not unidade_id:
-        #         raise API_Spring_Error('Unidade não encontrada.')
+        for unidade_id in unidades:
+            if not unidade_id:
+                continue
+                # raise API_Spring_Error('Unidade não encontrada.')
 
-        #     unidade = api.get_unidade_by_id(unidade_id)
-        #     obj_unidade = BaseUnit(unidade)
-        #     obj_controle_download.unidades.append(obj_unidade)
+            unidade: dict = api.get_unidade_by_id(unidade_id)
+            if unidade == ['Cliente nào encontrado']:
+                continue
 
-        # obj_controle_download.unidades = list(set(obj_controle_download.unidades))
-        # obj_controle_download.cnpjs = list(set([x.cnpj for x in obj_controle_download.unidades]))
+            obj_unidade = BaseUnit(unidade)
+            obj_controle_download.unidades.append(obj_unidade)
+
+        obj_controle_download.unidades = list(set(obj_controle_download.unidades))
+        obj_controle_download.cnpjs = list(set([x.cnpj for x in obj_controle_download.unidades]))
 
         filtered_controle_download.append(obj_controle_download)
 
     return filtered_controle_download
 
 
-def get_logins(name: str, ambient: Literal['prod', 'hml'] = 'prod') -> list[BaseControleDownload]:
+def get_logins(name: str, ambient: Literal['prod', 'hml', 'qas', 'local'] = 'prod') -> list[BaseControleDownload]:
     api = API_Spring(ambient)
     fornecedores_ids = api.get_fornecedores_by_name(name)
     list_fornecedores_ids = list(set([x for x, _ in fornecedores_ids]))
@@ -314,8 +364,8 @@ def get_logins(name: str, ambient: Literal['prod', 'hml'] = 'prod') -> list[Base
     return controle_download
 
 
-def send_log(ambient: Literal['prod', 'hml'], title: str, message: str, stacktrace: str,
-             origin: str, cliente_adm_id: int, status: Literal['warning', 'error', 'info', 'success'] = 'error',
+def send_log(ambient: Literal['prod', 'hml', 'qas', 'local'], title: str, message: str, stacktrace: str,
+             origin: str, cliente_adm_id: int | None, status: Literal['warning', 'error', 'info', 'success'] = 'error',
              login_id: int = 1):
     api = API_Spring(ambient)
     api.send_error_log(

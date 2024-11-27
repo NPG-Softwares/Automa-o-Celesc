@@ -19,10 +19,11 @@ class BaseControleDownload:
         self.dia_verificacao = data.get("diaVerificacao")
         self.nome_configuracao = data.get("nomeConfiguracao")
         self.observacao = data.get("observacao")
-        self.ambient: Literal['prod', 'hml']
+        self.ambient: Literal['prod', 'hml', 'qas', 'local']
         self.cnpjs: list[str] = []
         self.contas: list[BaseInvoice] = []  # Empty list for potential future use
         self.unidades: list[BaseUnit] = []  # Empty list for potential future use
+        self.tipo_conta_id: str | int | None
 
     def __repr__(self) -> str:
         return f"BaseClient(ControleDownloadId={self.id}, ClienteId={self.cliente_id})"
@@ -30,6 +31,7 @@ class BaseControleDownload:
 
 class BaseInvoice:
     def __init__(self, data: dict) -> None:
+        self.id = data.get("id")
         self.status = data.get("status")
         self.numero_conta = data.get("numeroConta")
         self.tipo_conta_id = data.get("tipoContaId")
@@ -40,6 +42,7 @@ class BaseInvoice:
         self.controle_download_id = data.get("controleDownloadId")
         self.unidade_id = data.get("unidadeId")
         self.login_id = data.get("loginId")
+        self.cnpj: str | None
 
     def __repr__(self) -> str:
         return f"BaseInvoice(conta={self.numero_conta}, contaId={self.conta_id}, status={self.status})"
@@ -47,6 +50,7 @@ class BaseInvoice:
 
 class BaseUnit:
     def __init__(self, data: dict) -> None:
+        self.id = data.get("id")
         self.status = data.get("status")
         self.active = data.get("active")
         self.cliente_adm_id = data.get("clienteAdmId")
