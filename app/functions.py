@@ -319,6 +319,20 @@ def read_pdf(byte_file: bytes):
             consumo += float(value)
 
     if consumo == 0.0:
+        tipos_consumo = ['Consumo Ponta TUSD', 'Consumo Fora Ponta TUSD', 'Consumo TUSD']
+
+        for tipo_consumo in tipos_consumo:
+            pattern = fr'{tipo_consumo}[\n\s]*KWH[\n\s]*(?:\d[.,]?)*'
+            regex = re.search(pattern, text)
+            if regex:
+                value = regex.group(0)
+                value = value.split('\n')[-1]
+                value = value.split(' ')[-1]
+                value = value.replace('.', '')
+                value = value.replace(',', '.')
+                consumo += float(value)
+
+    if consumo == 0.0:
         infos['consumo'] = None
     else:
         infos['consumo'] = formatar_valor_brasileiro(round(consumo, 2))
@@ -351,7 +365,7 @@ def read_pdf(byte_file: bytes):
     return infos
 
 
-def get_logins(ambient: Literal['prod', 'hml'] = 'prod') -> list[BaseControleDownload]:
+def get_logins(ambient: Literal['prod', 'hml', 'qas', 'local'] = 'prod') -> list[BaseControleDownload]:
     logins = _get_logins(name='CELESC', ambient=ambient)
 
     return logins
@@ -387,8 +401,6 @@ def create_invoice_object(login: BaseControleDownload, account: Account,
     inv.ClienteId = login.cliente_id
     inv.DownloadArquivo = now
     inv.Emissao = format_date(pdf_infos['emissao'], '%d/%m/%Y')
-    inv.FornecedorClasseId = login.fornecedor_classe_id
-    inv.FornecedorId = login.fornecedor_id
     inv.LoginId = 1
     inv.MesReferencia = invoice.billingPeriod[5:7]
     inv.NumeroConta = invoice.installation
@@ -407,13 +419,16 @@ def create_invoice_object(login: BaseControleDownload, account: Account,
 
     if obj_account:
         if obj_account.status != 'ATIVO':
-            print('Conta inativa')
+            print(' Conta inativa')
             return None, None
 
-        inv.ContaId = obj_account.conta_id
+        inv.FornecedorId = obj_account.fornecedor_id or login.fornecedor_id
+        inv.FornecedorClasseId = obj_account.fornecedor_classe_id or login.fornecedor_classe_id
         inv.TipoContaId = obj_account.tipo_conta_id
         inv.UnidadeId = obj_account.unidade_id
     else:
+        inv.FornecedorClasseId = login.fornecedor_classe_id
+        inv.FornecedorId = login.fornecedor_id
         inv.TipoContaId = get_account_type_id(login)
         inv.UnidadeId = login.unidade_id
 
